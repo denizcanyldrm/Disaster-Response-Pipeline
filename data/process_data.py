@@ -49,7 +49,6 @@ def save_data(df, database_filename):
     df.to_sql(database_filename[:-3], engine, index=False)
   
 
-
 def main():
     if len(sys.argv) == 4:
 
