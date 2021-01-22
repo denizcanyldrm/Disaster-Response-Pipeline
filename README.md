@@ -41,7 +41,7 @@ The dataset is provided by [Figure Eight] (https://appen.com) consisting of two 
 
 ## Results and Findings:
 
-
+![Image](https://drive.google.com/uc?export=view&id=1lS9Ro4QRcBdgFfgcGhsHWf2vZOzifkeT)
 
 ## Licensing, Authors, Acknowledgements:
 - [Figure Eight] (https://appen.com)
