@@ -4,6 +4,16 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    """Read two file paths into dataframes
+
+    Args:
+        messages_filepath (str): file path contains messages information
+        categories_filepath (str): file path contains categories information 
+    
+    Returns:
+        dataframe: a dataframe with messages and categories dataframes combined
+    """
+    
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     
@@ -11,6 +21,20 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """Clean data in the dataframe. 
+
+    - Create different columns for each message categories
+    - Drop original category column of dataframe
+    - Format messages column as 'str'
+    - Format each category column as 'int32'
+    
+    Args:
+        df (dataframe): a dataframe
+    
+    Returns:
+        dataframe: a cleansed dataframe 
+    """
+    
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
     
@@ -45,6 +69,16 @@ def clean_data(df):
     
 
 def save_data(df, database_filename):
+    """Save dataframe into sql database
+    
+    Args:
+        df (dataframe): a dataframe
+        database_filename (str): file name for database
+    
+    Returns:
+        None
+    """
+    
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql(database_filename[:-3], engine, index=False)
   
