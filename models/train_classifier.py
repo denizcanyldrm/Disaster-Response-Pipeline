@@ -23,6 +23,17 @@ import pickle
 
 
 def load_data(database_filepath):
+    """Load database into the dataframe
+
+    Args:
+        database_filepath (str): file path for database
+    
+    Returns:
+        array: an array that stores X values
+        array: an array that stores Y values
+        list: a list of category names
+    """
+    
     # load data from database
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table(database_filepath[:-3], engine)
@@ -36,6 +47,21 @@ def load_data(database_filepath):
     
 
 def tokenize(text):
+    """Tokenize text
+
+    - Process urls
+    - Normalization
+    - Word tokenize
+    - Remove stop words
+    - Lemmatization
+
+    Args:
+        text (str): a text message
+    
+    Returns:
+        list: a list of tokenized words
+    """
+    
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     
     # Normalization: Remove punctuation characters and lowercase
@@ -57,6 +83,15 @@ def tokenize(text):
 
 
 def build_model():
+    """Create a pipeline that contains CountVectorizer, TfidfTransformer and DecisionTreeClassifier
+
+    Args:
+        None
+    
+    Returns:
+        pipeline: a pipeline with grid search parameters specified
+    """
+    
     dtc = DecisionTreeClassifier(random_state=0)
 
     pipeline_dtc = Pipeline([
@@ -76,17 +111,39 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    y_pred = cv_dtc.predict(X_test)
+    """Evaluate model with test data and display classification_report
+
+    Args:
+        model (pipeline): a model pipeline
+        X_test (array): an array that contains test X values
+        Y_test (array): an array that contains test Y values
+        category_names (list): a list of category names
+
+    Returns:
+        None
+    """
     
-    accuracy = (y_true == y_pred).mean()
+    Y_pred = model.predict(X_test)
+    
+    accuracy = (Y_test == Y_pred).mean()
 
     print('Accuracy: {}'.format(accuracy))
-    for i in range(y_pred.shape[1]):
-        print('Class Label: {}'.format(names[i]))
-        print(classification_report(y_true[:, i], y_pred[:, i]))
+    for i in range(Y_pred.shape[1]):
+        print('Class Label: {}'.format(category_names[i]))
+        print(classification_report(Y_test[:, i], Y_pred[:, i]))
 
 
 def save_model(model, model_filepath):
+    """Save model into the given file path
+
+    Args:
+        model (pipeline): a model pipeline
+        model_filepath (str): a file path where model will be stored
+
+    Returns:
+        None
+    """
+    
     pickle.dump(model, open(model_filepath, "wb"))
 
 
