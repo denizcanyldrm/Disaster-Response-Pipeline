@@ -37,13 +37,13 @@ def clean_data(df):
     
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
-    
+
     # select the first row of the categories dataframe
     row = categories.iloc[0]
     
     # extract a list of new column names for categories by using this row
     category_colnames = row.apply(lambda x: x[:-2])
-    
+
     # rename the columns of `categories`
     categories.columns = category_colnames
     
@@ -54,17 +54,18 @@ def clean_data(df):
         # set each value to be the last character of the string
         categories[column] = categories[column].astype(str).apply(lambda x: x[-1])
         # convert column from string to numeric
-        categories[column] = categories[column].astype('int32')
-            
+        categories[column] = categories[column].astype(int)
+  
     # drop the original categories column from 'df'
     df = df.drop('categories', axis=1)
     
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df, categories], axis=1)
-    
+                 
     # drop duplicates
-    df = df.drop_duplicates()
-    
+    df.drop_duplicates(inplace=True)
+    df = df[df['related'] != 2]
+
     return df
     
 
@@ -80,8 +81,9 @@ def save_data(df, database_filename):
     """
     
     engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql(database_filename[:-3], engine, index=False)
-  
+    tableName = database_filename[5:]
+    df.to_sql(tableName[:-3], engine, index=False, if_exists = 'replace')
+
 
 def main():
     if len(sys.argv) == 4:
