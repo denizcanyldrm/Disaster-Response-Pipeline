@@ -36,13 +36,14 @@ def load_data(database_filepath):
     
     # load data from database
     engine = create_engine('sqlite:///' + database_filepath)
-    df = pd.read_sql_table(database_filepath[:-3], engine)
+    tableName = database_filepath[5:]
+    df = pd.read_sql_table(tableName[:-3], engine)
     
     # get X, Y values and category names
     X = df['message'].values
     Y = df.iloc[:, 4:].values
+
     category_names = df.iloc[:, 4:].columns
-    
     return X, Y, category_names
     
 
